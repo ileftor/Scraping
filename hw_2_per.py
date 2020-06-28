@@ -18,10 +18,10 @@ p = f'search/vacancy?clusters=true&enable_snippets=true&text={text}&L_save_area=
 
 vacancys = []
 
-response = requests.get(link + p, headers=header)
-while response.status_code == 200:
-    response = response.text
-    soup = bs(response, 'lxml')
+response = requests.get(link + p, headers=header).text
+soup = bs(response, 'lxml')
+
+while True:
     vacancy_block = soup.find('div', {'class': 'vacancy-serp'})
     vacancy_list = vacancy_block.find_all('div', {'class': 'vacancy-serp-item'})
     for vacancy in vacancy_list:
@@ -79,10 +79,13 @@ while response.status_code == 200:
         vacancys.append(vacancy_data)
 
         p = soup.find('a', {'class': 'bloko-button HH-Pager-Controls-Next HH-Pager-Control'})
-        if p:
-            p = p['href']
-            response = requests.get(link + p, headers=header)
-        else:
-            break
+    if p:
+        p = p['href']
+        response = requests.get(link + p, headers=header).text
+        soup = bs(response, 'lxml')
+    else:
+        break
 
-print(len(vacancys))
+#pprint(vacancys)
+df_hh = pd.DataFrame(vacancys)
+print (df_hh)
