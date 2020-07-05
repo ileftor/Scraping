@@ -1,0 +1,40 @@
+from pprint import pprint
+from lxml import html
+import requests
+import re
+
+# 1)Написать приложение, которое собирает основные новости с сайтов news.mail.ru, lenta.ru, yandex.news
+# Для парсинга использовать xpath. Структура данных должна содержать:
+# название источника,
+# наименование новости,
+# ссылку на новость,
+# дата публикации
+
+# lenta
+
+header = {'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36'}
+
+
+
+def request_to_lenta():
+    major_link = 'https://lenta.ru/'
+    response = requests.get(major_link, headers=header)
+    dom = html.fromstring(response.text)
+
+    newses_lenta = []
+    news_block = dom.xpath("//section[@class='row b-top7-for-main js-top-seven']")
+    for i in news_block:
+        news = {}
+        name = i.xpath(".//div[@class='item']//a/text() | .//div[@class='first-item']//h2//a/text()")
+        link = i.xpath(".//div[@class='item']//a/@href | .//div[@class='first-item']//h2//a/@href")
+        date = i.xpath(".//div[@class='item']//a/time/@datetime | .//div[@class='first-item']//h2//a/time/@datetime")
+
+        news['source'] = 'lenta.ru'
+        news['name'] = name
+        news['link'] = link
+        news['date'] = date
+        newses_lenta.append(news)
+    return (newses_lenta)
+
+
+pprint(request_to_lenta())
