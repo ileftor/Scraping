@@ -33,7 +33,7 @@ elem.send_keys(Keys.ENTER)
 
 mails_link = []
 
-for i in range(2):
+for i in range(5):
     time.sleep(2)
     mail = driver.find_elements_by_xpath("//a[@class = 'llc js-tooltip-direction_letter-bottom js-letter-list-item llc_pony-mode llc_normal']")
     for i in mail:
